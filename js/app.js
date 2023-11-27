@@ -1,4 +1,4 @@
-import { obtenerClientes, eliminarCliente } from './API.js';
+import { obtenerClientes, eliminarCliente} from './API.js';
 
 (function() {
     const listado = document.querySelector('#listado-clientes');

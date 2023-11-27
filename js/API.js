@@ -58,3 +58,31 @@ export const eliminarCliente = async id => {
         console.log(error);
     }
 }
+
+const apiKey = 'mlsn.fe8ab1dd51b605a62ef4395fd376f4a1c09aac4598facf877a8dbeb6c065a4bd';
+
+fetch('https://api.mailersend.com/v1/email', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${apiKey}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    // Detalles del correo electrónico aquí
+  }),
+})
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error('No se pudo enviar el correo electrónico');
+    }
+    return response.json();
+  })
+  .then((data) => {
+    console.log('Correo electrónico enviado con éxito', data);
+  })
+  .catch((error) => {
+    console.error('Error al enviar el correo electrónico:', error);
+  });
+
+
+
