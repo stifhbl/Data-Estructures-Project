@@ -1,16 +1,30 @@
-const sign_in_btn = document.querySelector("#sign-in-btn");
-const sign_up_btn = document.querySelector("#sign-up-btn");
+let HeadUser = null;
+
+
+const sign_in_btn = document.getElementById("sign-in-btn");
+const sign_up_btn = document.getElementById("sign-up-btn");
 const container = document.querySelector(".container");
 
-sign_up_btn.addEventListener('click', () =>{
-    container.classList.add("sign-up-mode");
+
+sign_up_btn.addEventListener('click', () => {
+  container.classList.add("sign-up-mode");
 });
 
-sign_in_btn.addEventListener('click', () =>{
-    container.classList.remove("sign-up-mode");
+sign_in_btn.addEventListener('click', () => {
+  container.classList.remove("sign-up-mode");
 });
+
+
+/////////////////////////////////// CON TOKEN ///////////////////////////////////////
 
 document.addEventListener('DOMContentLoaded', () => {
+  /* 
+   En el contexto de bases de datos como IndexedDB, 
+   la estructura de la base de datos maneja internamente 
+   el hashing y la indexación para almacenar y recuperar 
+   datos de manera eficiente.
+  */
+
   const dbRequest = indexedDB.open('UsersDatabase', 1);
 
   dbRequest.onupgradeneeded = event => {
@@ -25,10 +39,27 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error('Error al abrir la base de datos', event);
   };
 
+//////////// FUNCTION HASH TABLE ///////////////////////
+  function simpleHash(input) {
+    let hash = 0;
+    for (let i = 0; i < input.length; i++) {
+      const char = input.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash; // Convertir a un entero de 32bit
+    }
+    return hash.toString();
+  }
+
+  function generateToken(username, email) {
+    const rawToken = `${username}-${email}-${new Date().getTime()}`;
+    return simpleHash(rawToken);
+  }
+
   function validateEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   }
+
 
   function registerUser(email, username, password) {
     if (!validateEmail(email)) {
@@ -44,16 +75,18 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    const token = generateToken(username, email);
+
     const db = dbRequest.result;
     const transaction = db.transaction('users', 'readwrite');
     const objectStore = transaction.objectStore('users');
-    const request = objectStore.add({ username, email, password });
+    const request = objectStore.add({ username, email, password, token });
 
     request.onsuccess = () => {
-      console.log('Usuario registrado con éxito');
-      // redirection al usuario a la página principal
-
-      
+      localStorage.setItem('HeadUser', username);
+      alert('Usuario registrado con éxito. Token:');
+      // redirigir al usuario a la página de index.html
+      window.location.href = '../index.html';
     };
 
     request.onerror = () => {
@@ -65,42 +98,57 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+
   function validateCredentials(username, password) {
     if (username.length === 0 || password.length === 0) {
       alert('El nombre de usuario y la contraseña no pueden estar vacíos.');
       return;
     }
-
+  
     const db = dbRequest.result;
     const transaction = db.transaction('users', 'readonly');
     const objectStore = transaction.objectStore('users');
     const request = objectStore.get(username);
-
+    console.log(request);
+  
     request.onsuccess = () => {
       const user = request.result;
-      if (user && user.password === password) {
-        console.log('Inicio de sesión exitoso');
-        // Aquí puedes redirigir al usuario a su página de perfil o donde necesite ir después del inicio de sesión
+      localStorage.setItem('HeadUser', user.username);
+
+  
+      if (user) {
+        // Si el usuario existe, verifica la contraseña
+        if (user.password === password) {
+          alert('Inicio de sesión exitoso');
+          // redirigir al usuario a la página de index.html que está una carpeta arriba
+          window.location.href = '../index.html';
+        } else {
+          alert('Contraseña incorrecta.');
+        }
       } else {
-        alert('Nombre de usuario o contraseña incorrecta.');
+        // Si el usuario no existe
+        alert('Usuario no encontrado.');
       }
     };
-
+  
     request.onerror = () => {
       console.error('No se pudo verificar las credenciales del usuario', request.error);
     };
   }
-
-  document.getElementById('signupBtn').addEventListener('click', () => {
+  const signupBtn = document.getElementById('signupBtn');
+  signupBtn.addEventListener('click', () => {
     const email = document.getElementById('signupEmail').value.trim();
     const username = document.getElementById('signupUsername').value.trim();
     const password = document.getElementById('signupPassword').value.trim();
     registerUser(email, username, password);
   });
+  
 
-  document.getElementById('signinBtn').addEventListener('click', () => {
+  const signinBtn = document.getElementById('signinBtn');
+  signinBtn.addEventListener('click', () => {
     const username = document.getElementById('signinUsername').value.trim();
     const password = document.getElementById('signinPassword').value.trim();
     validateCredentials(username, password);
   });
 });
+

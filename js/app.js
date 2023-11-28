@@ -1,11 +1,17 @@
 import { obtenerClientes, eliminarCliente} from './API.js';
 
+
 (function() {
+
     const listado = document.querySelector('#listado-clientes');
     listado.addEventListener('click', confirmarEliminar);
 
 
-    document.addEventListener('DOMContentLoaded', mostrarClientes);
+    document.addEventListener('DOMContentLoaded', () => { 
+        mostrarClientes(); 
+        changeTextInSesionButton();
+    });
+
 
     async function mostrarClientes() {
         const clientes = await obtenerClientes();
@@ -45,6 +51,17 @@ import { obtenerClientes, eliminarCliente} from './API.js';
                 await eliminarCliente(clienteId)
             }
 
+        }
+    }
+
+    function changeTextInSesionButton(){;
+        const HeadUser = localStorage.getItem('HeadUser');
+        const sesionBtn = document.getElementById('boton-sesion');
+    
+        if (HeadUser && sesionBtn) {
+            sesionBtn.innerHTML = HeadUser;
+        } else {
+            sesionBtn.innerHTML = 'Iniciar Sesión';
         }
     }
 

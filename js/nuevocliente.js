@@ -1,4 +1,4 @@
-import { nuevoCliente } from './API.js';
+import {nuevoCliente } from './API.js';
 import { mostrarAlerta } from './funciones.js';
 
 (function() {
