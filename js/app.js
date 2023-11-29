@@ -1,6 +1,42 @@
 import { obtenerClientes, eliminarCliente} from './API.js';
 
 
+// linked list
+class ListNode {
+    constructor(data) {
+      this.data = data;
+      this.next = null;
+    }
+  }
+  
+  class LinkedList {
+    constructor() {
+      this.head = null;
+    }
+  
+    add(data) {
+      const newNode = new ListNode(data);
+      if (!this.head) {
+        this.head = newNode;
+        return;
+      }
+      let current = this.head;
+      while (current.next) {
+        current = current.next;
+      }
+      current.next = newNode;
+    }
+  
+    // Método para iterar sobre la lista
+    forEach(callback) {
+      let current = this.head;
+      while (current) {
+        callback(current.data);
+        current = current.next;
+      }
+    }
+  }
+
 (function() {
 
     const listado = document.querySelector('#listado-clientes');
@@ -15,9 +51,12 @@ import { obtenerClientes, eliminarCliente} from './API.js';
 
     async function mostrarClientes() {
         const clientes = await obtenerClientes();
+        const listaClientes = new LinkedList();
         
-        clientes.forEach( cliente => {
-            const { nombre, email, telefono, empresa, id } = cliente;
+        clientes.forEach(cliente => listaClientes.add(cliente));
+        
+        listaClientes.forEach(cliente => {
+          const { nombre, email, telefono, empresa, id } = cliente;
             const row = document.createElement('tr');
 
             row.innerHTML += `

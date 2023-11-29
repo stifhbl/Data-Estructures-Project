@@ -1,6 +1,53 @@
 import {obtenerCliente, editarCliente } from './API.js';
 import { mostrarAlerta } from './funciones.js';
 
+
+// Árbol de acciones de edición 
+/* 
+     implementamos un árbol para registrar y gestionar 
+     las distintas etapas o decisiones tomadas durante 
+     la edición de un cliente. Esto podrá ser útil para 
+     realizar un seguimiento de las acciones realizadas y, 
+     potencialmente, para deshacer o revisar pasos 
+     específicos en el proceso de edición esto seria metadata
+     para la API propia de este CRM.
+
+
+*/
+
+class TreeNode {
+    constructor(action, data) {
+      this.action = action;
+      this.data = data;
+      this.children = [];
+    }
+  }
+  
+  class ActionTree {
+    constructor() {
+      this.root = new TreeNode('Inicio de edición', {});
+    }
+  
+    addNode(action, data, parent) {
+      const newNode = new TreeNode(action, data);
+      parent.children.push(newNode);
+      return newNode;
+    }
+  
+    // Puedes agregar métodos adicionales para recorrer o buscar en el árbol
+  }
+  
+  const editActionTree = new ActionTree();
+  
+  // Ejemplo de cómo añadir un nodo al árbol
+  // Esta lógica se añadiría en las partes del código donde se realiza una acción de edición
+  
+  function registrarAccion(action, data) {
+    const currentNode = editActionTree.addNode(action, data, editActionTree.root);
+    // Puedes usar currentNode para referenciar acciones específicas
+  }
+
+
 (function() {
 
 
@@ -32,6 +79,9 @@ import { mostrarAlerta } from './funciones.js';
         emailInput.value = email;
         telefonoInput.value = telefono;
         idInput.value = id;
+
+        // Registrar la acción de mostrar cliente
+        registrarAccion('Mostrar cliente', cliente)
     }
 
 
@@ -48,6 +98,9 @@ import { mostrarAlerta } from './funciones.js';
             mostrarAlerta('Todos los campos son obligatorios');
             return;
         }
+
+        // Registrar la acción de validar cliente
+        registrarAccion('Validar cliente', cliente);
 
         await editarCliente(cliente);
         window.location.href = 'index.html';
