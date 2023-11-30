@@ -2,6 +2,14 @@ import { obtenerClientes, eliminarCliente} from './API.js';
 
 
 // linked list
+
+/* 
+  Cuando recibimos la respuesta proveniente del servidor
+  de la API, la almacenamos primero en una lista enlazada 
+  para su procesado y luego iterar sobre esta lista para 
+  mostrar los clientes en la interfaz de usuario. 
+*/
+
 class ListNode {
     constructor(data) {
       this.data = data;
