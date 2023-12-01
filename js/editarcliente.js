@@ -12,7 +12,6 @@ import { mostrarAlerta } from './funciones.js';
      específicos en el proceso de edición esto seria metadata
      para la API propia de este CRM.
 
-
 */
 
 class TreeNode {

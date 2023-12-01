@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
    el hashing y la indexación para almacenar y recuperar 
    datos de manera eficiente.
   */
-
+  // indexedDB funciona con hash table 
   const dbRequest = indexedDB.open('UsersDatabase', 1);
 
   dbRequest.onupgradeneeded = event => {
@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rawToken = `${username}-${email}-${new Date().getTime()}`;
     return simpleHash(rawToken);
   }
+////////////////////////////////////////////////////////////////
 
   function validateEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

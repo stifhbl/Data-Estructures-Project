@@ -1,7 +1,7 @@
 const url = "http://localhost:4000/clientes";
 
 
-/* 
+/*
 listas enlazadas con Json-server a traves de fetch
 para poder hacer peticiones a la API de Json-server
 para luego manipular los datos en el DOM
